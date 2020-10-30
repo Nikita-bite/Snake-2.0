@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snake</title>
+</head>
+<body style="background-color: #7eef7d; height: auto; width: auto;">
+<canvas id="canvas" style="display: block; margin: auto; margin-top: 10%;">У тебя Internet Exploler? Ха-Ха-Ха</canvas>
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 608;
+  canvas.height = 608;
+  const ground = new Image();
+  ground.src ='ground.png';
+  const foodImg = new Image();
+  foodImg.src ='food.png';
+  let rect = new Path2D();
+  let box = 32;
+  let score = 0;
+  let score2 = 0;
+  let win = 0;
+  let game;
+  let end;
+  let dr = 0;
+  let r = 0;
+  let v_s;
+  let food = {
+    x: Math.floor(Math.random() * 17 + 1) * box,
+    y: (Math.floor(Math.random() * 15 + 3) * box),
+  };
+  let snake = [];
+    snake[0] = {
+      x: 15 * box,
+      y: 10 * box,
+    };
+  let snake2 = [];
+    snake2[0] = {
+      x: 3 * box,
+      y: 10 * box,
+    };
+  document.addEventListener('keydown', direction);
+  let dir;
+  let dir2;
+  function direction(event){
+    if(event.keyCode == 37 && dir != 'right') {
+      dir = 'left'
+    }
+    if(event.keyCode == 38 && dir != 'down') {
+      dir = 'up';
+    }
+    if(event.keyCode == 39 && dir != 'left') {
+      dir = 'right';
+    }
+    if(event.keyCode == 40 && dir != 'up'){
+      dir = 'down';
+    }
+    if(event.keyCode == 65 && dir2 != 'right2') {
+      dir2 = 'left2';
+    }
+    if(event.keyCode == 87 && dir2 != 'down2') {
+      dir2 = 'up2';
+    }
+    if(event.keyCode == 68 && dir2 != 'left2') {
+      dir2 = 'right2';
+    }
+    if(event.keyCode == 83 && dir2 != 'up2'){
+      dir2 = 'down2';
+    }
+  }
+  function eatTail() {
+    for (let i = 0; i < snake.length; i++) {
+      for (let j = 0; j < snake2.length; j++) {
+        if (newHead.x == newHead2.x && newHead.y == newHead2.y) {
+          win = 3;
+          clearInterval(game);
+          end = setInterval(start_end , 300);
+        }
+        if (newHead.x == snake2[j].x && newHead.y == snake2[j].y) {
+          win = 1;
+          clearInterval(game);
+          end = setInterval(start_end , 300);
+        }
+        if (newHead2.x == snake[i].x && newHead2.y == snake[i].y) {
+          win = 2;
+          clearInterval(game);
+          end = setInterval(start_end , 300);
+        }
+      }
+    }
+  }
+  start_end();
+  function start_end(){
+    function drawstart() {
+      dr +=1 ;
+      ctx.fillStyle = '#7eef7d';
+      ctx.fillRect(0, 0, innerWidth, innerHeight);
+      ctx.fillStyle = '#fff17d';
+      ctx.font = '84px Comic Sans MS';
+      ctx.fillText('< Snake 2.0 >', 55, 100);
+    }
+    drawstart();
+    if(win == 0){
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '64px Arial';
+      ctx.fillText('Let`s play!!!' , 130 , 270 );
+      function vlet () {
+        let v = prompt('< Snake 2.0 > : Укажите скорость (клетки в секунду):');
+        v_s = (v / (v * v)) * 1000;
+      }
+      if (dr == 1) {
+        vlet();
+      }
+    }
+    if(win == 1){
+      ctx.fillStyle = '#018000';
+      ctx.font = '64px Arial';
+      ctx.fillText('Green win!!!' , 140 , 260 );
+    }
+    if(win == 2){
+      ctx.fillStyle = '#d7fd00';
+      ctx.font = '64px Arial';
+      ctx.fillText('Yellow win!!!' , 130 , 260 );
+    }
+    if(win == 3){
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '64px Arial';
+      ctx.fillText('Dead heat!!!' , 150 , 260 );
+    }
+    ctx.fillStyle = '#fdf000';
+    rect.rect(150 , 350 , 300 , 100 );
+    ctx.fill(rect);
+    ctx.fillStyle = '#1de778';
+    ctx.font = '64px Arial';
+    if(r == 0) {
+      ctx.fillText('Start > ', 210, 425);
+    }
+    if(r == 1) {
+      ctx.fillText('< End', 210, 425);
+    }
+    canvas.addEventListener('mousedown' , direction2);
+    function direction2(event){
+      if(ctx.isPointInPath(rect , event.offsetX ,event.offsetY )){
+        if(r == 0) {
+          ctx.clearRect(0, 0, innerWidth, innerHeight);
+          clearInterval(end);
+          console.log(r);
+          game = setInterval(draw, v_s);
+        }
+        if(r == 1) {
+          ctx.clearRect(0, 0, innerWidth, innerHeight);
+          clearInterval(end);
+          console.log(r);
+          location.reload();
+        }
+      }
+    }
+  }
+  function draw() {
+    r = 1
+    ctx.drawImage(ground, 0, 0);
+    ctx.drawImage(foodImg, food.x, food.y);
+    for(let i = 0; i < snake.length; i++){
+      ctx.fillStyle = i == 0 ? '#018000' : '#01af00';
+      ctx.fillRect(snake[i].x , snake[i].y , box , box );
+    }
+    for(let i = 0; i < snake2.length; i++){
+      ctx.fillStyle = i == 0 ? '#d7fd00' : '#ffe600';
+      ctx.fillRect(snake2[i].x , snake2[i].y , box , box );
+    }
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '64px Arial';
+    ctx.fillText('Score Y: ' + score2 + ',', box * 3, box * 1.8 );
+    ctx.fillText('G: ' + score, box * 14, box * 1.8 );
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+    let snake2X = snake2[0].x;
+    let snake2Y = snake2[0].y;
+    if(snakeX == food.x && snakeY == food.y) {
+      score++;
+      food = {
+        x: Math.floor(Math.random() * 17 + 1) * box,
+        y: (Math.floor(Math.random() * 15 + 3) * box),
+      };
+    } else {
+      snake.pop();
+    }
+    if(snake2X == food.x && snake2Y == food.y) {
+      score2++;
+      food = {
+        x: Math.floor(Math.random() * 17 + 1) * box,
+        y: (Math.floor(Math.random() * 15 + 3) * box),
+      };
+    } else {
+      snake2.pop();
+    }
+    if(snakeX < box || snakeX > box * 17 || snakeY < 3 * box || snakeY > box * 17){
+      win = 2;
+      clearInterval(game);
+      end = setInterval(start_end , 300);
+    }
+    if(snake2X < box || snake2X > box * 17 || snake2Y < 3 * box || snake2Y > box * 17){
+      win = 1;
+      clearInterval(game);
+       end = setInterval(start_end , 300);
+    }
+    if (dir == 'left'){
+      snakeX -= box;
+    }
+    if (dir == 'right'){
+      snakeX += box;
+    }
+    if (dir == 'up'){
+      snakeY -= box;
+    }
+    if (dir == 'down'){
+      snakeY += box;
+    }
+    if (dir2 == 'left2'){
+      snake2X -= box;
+    }
+    if (dir2 == 'right2'){
+      snake2X += box;
+    }
+    if (dir2 == 'up2'){
+      snake2Y -= box;
+    }
+    if (dir2 == 'down2'){
+      snake2Y += box;
+    }
+    let newHead = {
+      x: snakeX,
+      y: snakeY,
+    };
+    let newHead2 = {
+      x: snake2X,
+      y: snake2Y,
+    };
+    eatTail();
+    snake.unshift(newHead);
+    snake2.unshift(newHead2);
+  }
+</script>
+</body>
+</html>
