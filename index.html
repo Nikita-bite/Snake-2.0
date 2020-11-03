@@ -99,7 +99,6 @@
       ctx.font = '84px Comic Sans MS';
       ctx.fillText('< Snake 2.0 >', 55, 100);
     }
-    drawstart();
     if(win == 0){
       ctx.fillStyle = '#ffffff';
       ctx.font = '64px Arial';
@@ -138,6 +137,7 @@
     if(r == 1) {
       ctx.fillText('< End', 210, 425);
     }
+    drawstart();
     canvas.addEventListener('mousedown' , direction2);
     function direction2(event){
       if(ctx.isPointInPath(rect , event.offsetX ,event.offsetY )){
